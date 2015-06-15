@@ -16,6 +16,7 @@ namespace CravoGameLibTest
         Texture2D texture;
         Vector2 position = Vector2.Zero;
         Vector2 velocity = Vector2.One * 128.0f;
+        CravoGameLib.TileMap.Map map;
 
         public Game1()
         {
@@ -49,6 +50,9 @@ namespace CravoGameLibTest
             dataManager = new DataManager("GameData", GraphicsDevice);
 
             texture = dataManager.Load<Texture2D>("test");
+
+            map = new CravoGameLib.TileMap.Map();
+            map.Load("GameData\\TileMap\\desert.tmx", GraphicsDevice);
         }
 
         /// <summary>
@@ -102,7 +106,8 @@ namespace CravoGameLibTest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            map.Draw();
+
             spriteBatch.Begin();
             spriteBatch.Draw(texture, position, Color.White);
             spriteBatch.End();

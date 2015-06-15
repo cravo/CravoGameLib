@@ -49,5 +49,24 @@ namespace CravoGameLib.Extensions
                 return defaultValue;
             }
         }
+        
+        /// <summary>
+        /// Gets the attribute value as a float.  If the attribute doesn't exist, returns the default
+        /// </summary>
+        /// <param name="element">The element to query</param>
+        /// <param name="attribute">The attribute to get the value of</param>
+        /// <param name="defaultValue">The default to return if the attribute doesn't exist</param>
+        /// <returns></returns>
+        public static float TryGetFloat(this XmlElement element, string attribute, float defaultValue)
+        {
+            if (element.HasAttribute(attribute))
+            {
+                return Convert.ToSingle(element.GetAttribute(attribute));
+            }
+            else
+            {
+                return defaultValue;
+            }
+        }
     }
 }
