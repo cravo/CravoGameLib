@@ -41,6 +41,8 @@ namespace CravoGameLib.TileMap
         private SpriteBatch SpriteBatch;
         public int WidthInPixels { get; private set; }
         public int HeightInPixels { get; private set; }
+        Tileset[] TilesetForGID;
+        Rectangle[] RectForGID;
 
         public Map()
         {
@@ -104,6 +106,62 @@ namespace CravoGameLib.TileMap
                     Layers.Add(layer);
                 }
             }
+
+            Precompute();
+        }
+
+        private void Precompute()
+        {
+            int maxTileGID = 0;
+
+            foreach (Layer layer in Layers)
+            {
+                for (int y = 0; y < layer.Height; ++y)
+                {
+                    for (int x = 0; x < layer.Width; ++x)
+                    {
+                        int tileGID = layer.TileGID[x, y];
+                        if (tileGID > maxTileGID) maxTileGID = tileGID;
+                    }
+                }
+            }
+
+            TilesetForGID = new Tileset[maxTileGID + 1];
+            RectForGID = new Rectangle[maxTileGID + 1];
+
+            foreach (Layer layer in Layers)
+            {
+                for (int y = 0; y < layer.Height; ++y)
+                {
+                    for (int x = 0; x < layer.Width; ++x)
+                    {
+                        int tileGID = layer.TileGID[x, y];
+
+                        Tileset tileset = GetTilesetForTileGID(tileGID);
+                        TilesetForGID[tileGID] = tileset;
+
+                        int tileLocalID = tileGID - tileset.FirstGID;
+                        int currentID = 0;
+                        int tx = tileset.Margin;
+                        int ty = tileset.Margin;
+                        while (currentID < tileLocalID - 1)
+                        {
+                            tx += TileWidth + tileset.Spacing;
+
+                            if (tx > tileset.Texture.Width - TileWidth)
+                            {
+                                ty += TileHeight + tileset.Spacing;
+                                tx = tileset.Margin;
+                            }
+
+                            ++currentID;
+                        }
+
+                        Rectangle tileRect = new Rectangle(tx, ty, TileWidth, TileHeight);
+                        RectForGID[tileGID] = tileRect;
+                    }
+                }
+            }
         }
 
         private void AddTileset(XmlElement element, string filePath, GraphicsDevice device)
@@ -152,26 +210,8 @@ namespace CravoGameLib.TileMap
                         {
                             int tileGID = layer.TileGID[x, y];
 
-                            //todo: precompute tile rects
-                            Tileset tileset = GetTilesetForTileGID(tileGID);
-                            int tileLocalID = tileGID - tileset.FirstGID;
-                            int currentID = 0;
-                            int tx = tileset.Margin;
-                            int ty = tileset.Margin;
-                            while (currentID < tileLocalID - 1)
-                            {
-                                tx += TileWidth + tileset.Spacing;
-
-                                if (tx > tileset.Texture.Width - TileWidth)
-                                {
-                                    ty += TileHeight + tileset.Spacing;
-                                    tx = tileset.Margin;
-                                }
-
-                                ++currentID;
-                            }
-
-                            Rectangle tileRect = new Rectangle(tx, ty, TileWidth, TileHeight);
+                            Tileset tileset = TilesetForGID[tileGID];
+                            Rectangle tileRect = RectForGID[tileGID];
                             Rectangle destRect = new Rectangle((x * TileWidth) - (int)camera.Position.X, (y * TileHeight) - (int)camera.Position.Y, TileWidth, TileHeight);
                             SpriteBatch.Draw(tileset.Texture, destRect, tileRect, new Color(1, 1, 1, layer.Opacity));
                         }
