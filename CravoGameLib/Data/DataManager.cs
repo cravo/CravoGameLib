@@ -101,7 +101,17 @@ namespace CravoGameLib.Data
 
             DataProcessors = new Dictionary<Type, DataProcessor>();
 
-            DataProcessors.Add(typeof(Texture2D), new Processor.Texture2DProcessor());
+            AddDataProcessor(typeof(Texture2D), new Processor.Texture2DProcessor());
+        }
+
+        /// <summary>
+        /// Add a new data processor
+        /// </summary>
+        /// <param name="type">The type of data your processor handles.  Will throw exception if this type of processor exists already</param>
+        /// <param name="processor">The processor.  It'll be passed data of your type when encountered.</param>
+        public void AddDataProcessor(Type type, DataProcessor processor)
+        {
+            DataProcessors.Add(type, processor);
         }
     }
 }
