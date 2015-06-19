@@ -39,6 +39,8 @@ namespace CravoGameLib.TileMap
         private List<Tileset> Tilesets { get; set; }
         private List<Layer> Layers { get; set; }
         private SpriteBatch SpriteBatch;
+        public int WidthInPixels { get; private set; }
+        public int HeightInPixels { get; private set; }
 
         public Map()
         {
@@ -53,6 +55,8 @@ namespace CravoGameLib.TileMap
             HeightInTiles = 1;
             TileWidth = 1;
             TileHeight = 1;
+            WidthInPixels = TileWidth * WidthInTiles;
+            HeightInPixels = TileHeight * HeightInTiles;
             BackgroundColour = Color.Black;
             NextObjectID = 1;
             Tilesets = new List<Tileset>();
@@ -81,7 +85,9 @@ namespace CravoGameLib.TileMap
                 HeightInTiles = mapElement.TryGetInt("height", HeightInTiles);
                 TileWidth = mapElement.TryGetInt("tilewidth", TileWidth);
                 TileHeight = mapElement.TryGetInt("tileheight", TileHeight);
-
+                WidthInPixels = WidthInTiles * TileWidth;
+                HeightInPixels = HeightInTiles * TileHeight;
+                
                 //todo: Background Colour, leave unsupported for now.
                 //todo: RenderOrder, leave unsupported for now.
 
@@ -131,11 +137,13 @@ namespace CravoGameLib.TileMap
             return Tilesets[tilesetIndex];
         }
 
-        public void Draw()
+        public void Draw(Camera camera)
         {
             SpriteBatch.Begin();
             foreach (Layer layer in Layers)
             {
+                //todo: Don't always draw the whole layer, work out what's visible and only draw that
+
                 if (layer.Visible == Layer.Visibility.Visible)
                 {
                     for (int y = 0; y < layer.Height; ++y)
@@ -164,8 +172,8 @@ namespace CravoGameLib.TileMap
                             }
 
                             Rectangle tileRect = new Rectangle(tx, ty, TileWidth, TileHeight);
-
-                            SpriteBatch.Draw(tileset.Texture, new Rectangle(x * TileWidth, y * TileHeight, TileWidth, TileHeight), tileRect, new Color(1, 1, 1, layer.Opacity));
+                            Rectangle destRect = new Rectangle((x * TileWidth) - (int)camera.Position.X, (y * TileHeight) - (int)camera.Position.Y, TileWidth, TileHeight);
+                            SpriteBatch.Draw(tileset.Texture, destRect, tileRect, new Color(1, 1, 1, layer.Opacity));
                         }
                     }
                 }
