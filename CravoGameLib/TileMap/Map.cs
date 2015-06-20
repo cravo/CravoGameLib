@@ -197,23 +197,32 @@ namespace CravoGameLib.TileMap
 
         public void Draw(Camera camera)
         {
+            int xStart = (int)(camera.Position.X / (float)TileWidth);
+            int yStart = (int)(camera.Position.Y / (float)TileHeight);
+            int widthInTiles = (SpriteBatch.GraphicsDevice.Viewport.Width / TileWidth) + 1;
+            int heightInTiles = (SpriteBatch.GraphicsDevice.Viewport.Height / TileHeight) + 1;
+
             SpriteBatch.Begin();
             foreach (Layer layer in Layers)
             {
-                //todo: Don't always draw the whole layer, work out what's visible and only draw that
-
                 if (layer.Visible == Layer.Visibility.Visible)
                 {
-                    for (int y = 0; y < layer.Height; ++y)
+                    for (int y = yStart; y < yStart + heightInTiles; ++y)
                     {
-                        for (int x = 0; x < layer.Width; ++x)
+                        if (y >= 0 && y < HeightInTiles)
                         {
-                            int tileGID = layer.TileGID[x, y];
+                            for (int x = xStart; x < xStart + widthInTiles; ++x)
+                            {
+                                if (x >= 0 && x < WidthInTiles)
+                                {
+                                    int tileGID = layer.TileGID[x, y];
 
-                            Tileset tileset = TilesetForGID[tileGID];
-                            Rectangle tileRect = RectForGID[tileGID];
-                            Rectangle destRect = new Rectangle((x * TileWidth) - (int)camera.Position.X, (y * TileHeight) - (int)camera.Position.Y, TileWidth, TileHeight);
-                            SpriteBatch.Draw(tileset.Texture, destRect, tileRect, new Color(1, 1, 1, layer.Opacity));
+                                    Tileset tileset = TilesetForGID[tileGID];
+                                    Rectangle tileRect = RectForGID[tileGID];
+                                    Rectangle destRect = new Rectangle((x * TileWidth) - (int)camera.Position.X, (y * TileHeight) - (int)camera.Position.Y, TileWidth, TileHeight);
+                                    SpriteBatch.Draw(tileset.Texture, destRect, tileRect, new Color(1, 1, 1, layer.Opacity));
+                                }
+                            }
                         }
                     }
                 }
