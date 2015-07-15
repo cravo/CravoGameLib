@@ -1,6 +1,7 @@
 # CravoGameLib
-A game library of commonly used classes.
-Primarily built around MonoGame.
+A work-in-progress game library of commonly used classes for C#, primarily built around MonoGame.
+This is currently in early and sporadic development, do not expect a full-featured game library any time soon.  See the current open issues for some idea of my plans for the bits which already exist, and a few ideas about what to add as and when I think about them.
+
 See CravoGameLibTest for an example which demonstrates:
 * Loading and rendering a Texture2D
 * Loading and drawing a TileMap
