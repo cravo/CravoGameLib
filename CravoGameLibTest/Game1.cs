@@ -54,7 +54,7 @@ namespace CravoGameLibTest
             texture = dataManager.Load<Texture2D>("test");
 
             map = new CravoGameLib.TileMap.Map();
-            map.Load("GameData\\TileMap\\desert.tmx", GraphicsDevice);
+            map.Load("GameData\\TileMap\\testmap.tmx", GraphicsDevice);
         }
 
         /// <summary>
