@@ -51,7 +51,12 @@
     <Compile Include="Data\DataProcessor.cs" />
     <Compile Include="Data\DataReader.cs" />
     <Compile Include="Data\Processor\Texture2DProcessor.cs" />
+    <Compile Include="Extensions\XmlElementExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TileMap\Camera.cs" />
+    <Compile Include="TileMap\Layer.cs" />
+    <Compile Include="TileMap\Map.cs" />
+    <Compile Include="TileMap\Tileset.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

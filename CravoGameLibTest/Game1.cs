@@ -16,12 +16,15 @@ namespace CravoGameLibTest
         Texture2D texture;
         Vector2 position = Vector2.Zero;
         Vector2 velocity = Vector2.One * 128.0f;
+        CravoGameLib.TileMap.Map map;
+        CravoGameLib.TileMap.Camera camera = new CravoGameLib.TileMap.Camera();
+        Vector2 cameraVelocity = new Vector2(128, 128);
 
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
-
+            this.IsFixedTimeStep = false;
         }
 
         /// <summary>
@@ -49,6 +52,9 @@ namespace CravoGameLibTest
             dataManager = new DataManager("GameData", GraphicsDevice);
 
             texture = dataManager.Load<Texture2D>("test");
+
+            map = new CravoGameLib.TileMap.Map();
+            map.Load("GameData\\TileMap\\desert.tmx", GraphicsDevice);
         }
 
         /// <summary>
@@ -67,7 +73,28 @@ namespace CravoGameLibTest
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            // TODO: Add your update logic here
+            camera.Position += cameraVelocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
+            if ( camera.Position.X > map.WidthInPixels - GraphicsDevice.Viewport.Width )
+            {
+                camera.Position.X = map.WidthInPixels - GraphicsDevice.Viewport.Width;
+                cameraVelocity.X = -cameraVelocity.X;
+            }
+            if ( camera.Position.X < 0 )
+            {
+                camera.Position.X = 0;
+                cameraVelocity.X = -cameraVelocity.X;
+            }
+            if (camera.Position.Y > map.HeightInPixels - GraphicsDevice.Viewport.Height)
+            {
+                camera.Position.Y = map.HeightInPixels - GraphicsDevice.Viewport.Height;
+                cameraVelocity.Y = -cameraVelocity.Y;
+            }
+            if (camera.Position.Y < 0)
+            {
+                camera.Position.Y = 0;
+                cameraVelocity.Y = -cameraVelocity.Y;
+            }
+
             position += velocity * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
             if ( position.X > GraphicsDevice.Viewport.Width - texture.Width )
@@ -102,7 +129,8 @@ namespace CravoGameLibTest
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            map.Draw(camera);
+
             spriteBatch.Begin();
             spriteBatch.Draw(texture, position, Color.White);
             spriteBatch.End();
