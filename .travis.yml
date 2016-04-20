@@ -1,2 +1,4 @@
 language: csharp
 solution: CravoGameLib.sln
+script:
+  - xbuild /p:Configuration=Debug solution-name.sln
